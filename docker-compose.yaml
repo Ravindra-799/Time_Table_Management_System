@@ -1,0 +1,25 @@
+version: '20.10.23' # docker version
+services:
+  www:
+    image: ttms:1.0
+    volumes:
+      - "./:/var/www/html" # Sync project dir with container we dir
+    ports:
+      - "80:80" # Expose port 80 to host
+      - "443:443" # Expose port 443 to host for future ssl traffic 
+  db:
+    image: mysql:latest
+    environment:
+      - MYSQL_DATABASE=timetable
+      - MYSQL_USER=php_docker
+      - MYSQL_PASSWORD=php_docker # this should live in env var
+      - MYSQL_ALLOW_EMPTY_PASSWORD=1 # equivalent to True
+    volumes:
+      - './db:/docker-entrypoint-initdb.d' ## Synnc persistent sql files with container
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8001:80"
+    environment:
+      - PMA_HOST=db
+      - PMA_PORT=3306
